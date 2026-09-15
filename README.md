@@ -37,6 +37,7 @@ The first video load downloads the embedding model (~90 MB). CORS allows `localh
 4. **Citations.** The model cites `[[chunk_id]]`. An `after_agent` middleware checks each ID against chunks actually returned by `search_video_transcript` in that thread and attaches `{chunk_id, start_time, end_time, text}` from the retrieval result to the message. Unknown IDs are removed. Timestamps never come from the model.
 5. **Skills.** `backend/app/skills/*.md` are loaded once; grounding is always included, summarization is added for summary-style questions (`agents/prompts.py`).
 6. **Limits.** Per run: 6 tool calls and 8 model calls (`MAX_TOOL_CALLS`, `MAX_MODEL_CALLS`).
+7. **Tracing (optional).** With `LANGSMITH_TRACING=true` and a `LANGSMITH_API_KEY`, every agent and ingestion run is traced to the `LANGSMITH_PROJECT` project in LangSmith. Without a key, nothing is sent.
 
 ### MCP server
 
@@ -46,12 +47,18 @@ The first video load downloads the embedding model (~90 MB). CORS allows `localh
 
 | Variable | Default | Notes |
 |---|---|---|
-| `GOOGLE_API_KEY`, `YOUTUBE_API_KEY` | | Backend only, never exposed to the browser |
+| `GOOGLE_API_KEY` | | Required. Backend only, never exposed to the browser |
+| `YOUTUBE_API_KEY` | | Optional. Without it, video details show a notice |
+| `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` | `false`, empty, `youtube-assistant` | Optional tracing. Set a key and `LANGSMITH_TRACING=true` to trace runs |
+| `HF_TOKEN` | | Optional. Avoids Hugging Face rate limits when downloading the embedding model |
 | `GEMINI_MODEL` | `gemini-flash-lite-latest` | Alias avoids pinning a retired model; set an exact model if you prefer |
 | `EMBEDDING_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | Changing it re-indexes videos on next load |
-| `QDRANT_PATH` | `./data/qdrant` | Relative to `backend/` |
+| `QDRANT_PATH`, `QDRANT_COLLECTION` | `./data/qdrant`, `video_transcripts` | Path is relative to `backend/` |
+| `TRANSCRIPT_CACHE_DIR` | `./data/transcripts` | Cached captions and index markers |
 | `TOP_K` | `5` | Chunks per search |
 | `CHUNK_TOKENS`, `CHUNK_OVERLAP_TOKENS` | `240`, `40` | See limitations |
+| `MAX_TOOL_CALLS`, `MAX_MODEL_CALLS` | `6`, `8` | Per-run agent limits |
+| `HTTP_TIMEOUT_SECONDS` | `10` | YouTube Data API timeout |
 | `LANGGRAPH_API_URL` | `http://localhost:2024` | Frontend uses `NEXT_PUBLIC_LANGGRAPH_API_URL` |
 
 ## Checks
