@@ -18,6 +18,13 @@ describe("linkCitations", () => {
       "A [cite](#cite:abc_5) B  C [cite](#cite:abc_5) D ",
     );
   });
+  it("repairs nested and single-bracket forms the model sometimes writes", () => {
+    const cites = [citation, { ...citation, chunk_id: "abc_6" }];
+    expect(linkCitations("A [[abc_5], [abc_6]]. B [abc_6]. C [1].", cites)).toBe(
+      "A [cite](#cite:abc_5) [cite](#cite:abc_6). B [cite](#cite:abc_6). C [1].",
+    );
+    expect(linkCitations("Streaming [[abc_5], [abc_", cites)).toBe("Streaming [cite](#cite:abc_5), ");
+  });
   it("drops every marker while no citations are validated yet", () => {
     expect(linkCitations("Answer [[abc_5]].", [])).toBe("Answer .");
   });

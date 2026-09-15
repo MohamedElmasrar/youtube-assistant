@@ -8,8 +8,11 @@ from typing import Any
 from langchain_core.messages import AIMessage, BaseMessage, ToolMessage
 
 SEARCH_TOOL_NAME = "search_video_transcript"
-_MARKER_RE = re.compile(r"\[\[\s*([^\[\]]*?)\s*\]\]")
-_SEPARATOR_RE = re.compile(r"[,;\s]+")
+# Models sometimes nest or merge brackets: [[a_1]], [[a_1, a_2]], [[a_1], [a_2]], [a_1].
+# A marker is a bracketed run made only of chunk-ID-shaped tokens and separators.
+_ID = r"[A-Za-z0-9_-]*_\d+"
+_MARKER_RE = re.compile(rf"\[+\s*{_ID}(?:[\s,;\[\]]+{_ID})*\s*\]+|\[\[[^\[\]]*\]\]")
+_TOKEN_RE = re.compile(r"[A-Za-z0-9_-]+")
 
 
 def collect_evidence(messages: Iterable[BaseMessage], video_id: str) -> dict[str, dict[str, Any]]:
@@ -31,7 +34,7 @@ def rewrite_markers(text: str, evidence: dict[str, Any]) -> tuple[str, list[str]
     cited: list[str] = []
 
     def replace(match: re.Match[str]) -> str:
-        ids = [i for i in _SEPARATOR_RE.split(match.group(1)) if i]
+        ids = _TOKEN_RE.findall(match.group(0))
         valid = [i for i in ids if i in evidence]
         cited.extend(i for i in valid if i not in cited)
         return "".join(f"[[{i}]]" for i in valid)

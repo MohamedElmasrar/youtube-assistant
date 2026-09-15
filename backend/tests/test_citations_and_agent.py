@@ -46,6 +46,15 @@ def test_rewrite_markers_drops_unknown_ids_and_splits_lists():
     assert cited == ["a_1", "a_2"]
 
 
+def test_rewrite_markers_repairs_nested_and_single_bracket_forms():
+    evidence = {"a_2": {}, "a_3": {}}
+    text, cited = rewrite_markers(
+        "X [[a_2], [a_3]]. Y [a_3]. Z [[a_2], [fake_9]]. W [1].", evidence
+    )
+    assert text == "X [[a_2]][[a_3]]. Y [[a_3]]. Z [[a_2]]. W [1]."
+    assert cited == ["a_2", "a_3"]
+
+
 def test_attach_citations_uses_retrieved_timestamps_not_model_text():
     message = AIMessage(content=f"It starts at 99:99 [[{VID}_5]] and [[{VID}_404]].", id="m1")
     result = attach_citations(message, {f"{VID}_5": CHUNK})
@@ -58,7 +67,7 @@ def test_attach_citations_uses_retrieved_timestamps_not_model_text():
 def test_attach_citations_handles_block_content():
     message = AIMessage(content=[{"type": "text", "text": f"Yes [[{VID}_5]] [[bad_1]]"}])
     result = attach_citations(message, {f"{VID}_5": CHUNK})
-    assert result.content[0]["text"] == f"Yes [[{VID}_5]] "
+    assert result.content[0]["text"] == f"Yes [[{VID}_5]]"
 
 
 class ToolCapableFakeModel(GenericFakeChatModel):

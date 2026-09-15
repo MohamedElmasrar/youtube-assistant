@@ -20,8 +20,15 @@ export function messageCitations(message: Message): Citation[] {
   });
 }
 
-const MARKER = /\[\[\s*([^\[\]]*?)\s*\]\]/g;
-const PARTIAL_MARKER = /\[\[[^\]]*\]?$/;
+// Models sometimes nest or merge brackets: [[a_1]], [[a_1, a_2]], [[a_1], [a_2]], [a_1].
+// A marker is a bracketed run made only of chunk-ID-shaped tokens and separators.
+const ID = "[A-Za-z0-9_-]*_\\d+";
+const MARKER = new RegExp(
+  `\\[+\\s*${ID}(?:[\\s,;\\[\\]]+${ID})*\\s*\\]+|\\[\\[[^\\[\\]]*\\]\\]`,
+  "g",
+);
+const TOKEN = /[A-Za-z0-9_-]+/g;
+const PARTIAL_MARKER = /\[[\s\[\],;A-Za-z0-9_-]*$/;
 
 /**
  * Turn `[[chunk_id]]` markers into markdown links `[cite](#cite:chunk_id)` for validated
@@ -30,14 +37,13 @@ const PARTIAL_MARKER = /\[\[[^\]]*\]?$/;
 export function linkCitations(text: string, citations: Citation[]): string {
   const known = new Set(citations.map((c) => c.chunk_id));
   return text
-    .replace(PARTIAL_MARKER, "")
-    .replace(MARKER, (_, ids: string) =>
-      ids
-        .split(/[\s,;]+/)
+    .replace(MARKER, (marker) =>
+      (marker.match(TOKEN) ?? [])
         .filter((id) => known.has(id))
         .map((id) => `[cite](#cite:${id})`)
         .join(" "),
-    );
+    )
+    .replace(PARTIAL_MARKER, "");
 }
 
 export const CITE_PREFIX = "#cite:";
