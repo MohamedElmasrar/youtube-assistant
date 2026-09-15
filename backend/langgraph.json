@@ -1,0 +1,35 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "python_version": "3.12",
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "assistant": "./app/graphs/assistant.py:make_graph",
+    "ingestion": "./app/graphs/ingestion.py:graph"
+  },
+  "env": ".env",
+  "http": {
+    "app": "./app/main.py:app",
+    "cors": {
+      "allow_origins": [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001"
+      ],
+      "allow_methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "allow_headers": [
+        "*"
+      ],
+      "allow_credentials": false
+    }
+  }
+}
