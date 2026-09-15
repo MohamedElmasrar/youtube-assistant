@@ -1,0 +1,14 @@
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.langgraph_api/
+backend/data/
+node_modules/
+.next/
+frontend/coverage/
+*.tsbuildinfo
+next-env.d.ts
