@@ -101,11 +101,11 @@ def tool_call_reply():
     )
 
 
-async def ask(agent, question, video_id=VID, thread="t"):
+async def ask(agent, question, video_id=VID, thread="t", context=None):
     return await agent.ainvoke(
         {"messages": [HumanMessage(question)]},
         config={"configurable": {"thread_id": thread}},
-        context=VideoContext(video_id=video_id),
+        context=context if context is not None else VideoContext(video_id=video_id),
     )
 
 
@@ -139,6 +139,18 @@ async def test_run_without_valid_video_context_is_rejected():
     agent, _ = make_agent([AIMessage(content="never")])
     with pytest.raises(ValueError, match="video_id"):
         await ask(agent, "hi", video_id="../../etc")
+
+
+async def test_missing_context_gives_a_clear_error_not_a_type_error():
+    agent, _ = make_agent([AIMessage(content="never")])
+    with pytest.raises(ValueError, match="No video selected"):
+        await ask(agent, "hi", context=VideoContext())
+
+
+def test_video_id_is_not_part_of_the_input_schema():
+    agent, _ = make_agent([])
+    assert "video_id" not in agent.get_input_jsonschema()["properties"]
+    assert "video_id" in agent.get_output_jsonschema()["properties"]
 
 
 async def test_citations_from_another_threads_video_are_not_accepted():
