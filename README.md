@@ -1,11 +1,48 @@
 # YouTube Assistant
 
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![uv](https://img.shields.io/badge/uv-package%20manager-DE5FE9.svg?style=flat&logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-1.2%20Agent%20Server-1C3C3C.svg?style=flat&logo=langgraph&logoColor=white)](https://langchain-ai.github.io/langgraph/)
+[![LangChain](https://img.shields.io/badge/LangChain-1.5%20create__agent-1C3C3C.svg?style=flat&logo=langchain&logoColor=white)](https://python.langchain.com)
+[![Gemini](https://img.shields.io/badge/Gemini-Flash--Lite-8E75B2.svg?style=flat&logo=googlegemini&logoColor=white)](https://ai.google.dev/gemini-api/docs)
+[![MCP](https://img.shields.io/badge/MCP-FastMCP%201.30-000000.svg?style=flat&logo=modelcontextprotocol&logoColor=white)](https://modelcontextprotocol.io)
+[![LangChain MCP Adapters](https://img.shields.io/badge/LangChain%20MCP%20Adapters-0.3-1C3C3C.svg?style=flat&logo=langchain&logoColor=white)](https://github.com/langchain-ai/langchain-mcp-adapters)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.163-009688.svg?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Pydantic](https://img.shields.io/badge/Pydantic-2.14-E92063.svg?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev)
+[![Qdrant](https://img.shields.io/badge/Qdrant-local%20mode-DC244C.svg?style=flat&logo=qdrant&logoColor=white)](https://qdrant.tech)
+[![Sentence Transformers](https://img.shields.io/badge/Sentence%20Transformers-all--MiniLM--L6--v2-FFD21E.svg?style=flat&logo=huggingface&logoColor=black)](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+[![YouTube](https://img.shields.io/badge/YouTube-Data%20API%20v3%20%2B%20IFrame%20API-FF0000.svg?style=flat&logo=youtube&logoColor=white)](https://developers.google.com/youtube)
+[![LangSmith](https://img.shields.io/badge/LangSmith-tracing%20%28optional%29-1C3C3C.svg?style=flat&logo=langchain&logoColor=white)](https://smith.langchain.com)
+[![Node.js](https://img.shields.io/badge/Node.js-20.9+-5FA04E.svg?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000.svg?style=flat&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB.svg?style=flat&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4.svg?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-components-000000.svg?style=flat&logo=shadcnui&logoColor=white)](https://ui.shadcn.com)
+[![LangGraph SDK](https://img.shields.io/badge/LangGraph%20SDK-1.16%20useStream-1C3C3C.svg?style=flat&logo=langgraph&logoColor=white)](https://github.com/langchain-ai/langgraphjs)
+[![TanStack Query](https://img.shields.io/badge/TanStack%20Query-5-FF4154.svg?style=flat&logo=reactquery&logoColor=white)](https://tanstack.com/query)
+[![Zod](https://img.shields.io/badge/Zod-4-3E67B1.svg?style=flat&logo=zod&logoColor=white)](https://zod.dev)
+[![pytest](https://img.shields.io/badge/pytest-9-0A9EDC.svg?style=flat&logo=pytest&logoColor=white)](https://docs.pytest.org)
+[![Ruff](https://img.shields.io/badge/Ruff-lint%20%2B%20format-D7FF64.svg?style=flat&logo=ruff&logoColor=black)](https://docs.astral.sh/ruff/)
+[![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18.svg?style=flat&logo=vitest&logoColor=white)](https://vitest.dev)
+[![ESLint](https://img.shields.io/badge/ESLint-9-4B32C3.svg?style=flat&logo=eslint&logoColor=white)](https://eslint.org)
+
 Watch a YouTube video, search its transcript, and ask questions. Answers come from the transcript and cite the moments they are based on; clicking a citation seeks the player.
 
 - **Backend:** one LangGraph Agent Server (`langgraph dev`) that provides threads, runs, streaming and checkpoints. It also serves the custom `/api/*` video routes and a mounted MCP server.
 - **Agent:** LangChain `create_agent` with Gemini (`ChatGoogleGenerativeAI`). Its tools come from the MCP server through `langchain-mcp-adapters`.
 - **RAG:** `HuggingFaceEmbeddings` (all-MiniLM-L6-v2), `QdrantVectorStore` in local persistent mode, and the stock LangChain retriever filtered by video ID.
 - **Frontend:** Next.js (App Router), Tailwind, shadcn/ui, `@langchain/langgraph-sdk` (`useStream`), YouTube IFrame API.
+
+## Screenshots
+
+**The app:** player and video details, searchable transcript, and a streamed answer whose timestamp chips seek the player.
+
+![YouTube Assistant: player, transcript and chat with timestamp citations](screenshots/app_screen.png)
+
+**LangGraph Studio:** the `assistant` graph with its middleware nodes and the trace of one run, including the `search_video_transcript` MCP tool call and both Gemini calls.
+
+![LangGraph Studio: assistant graph and run trace](screenshots/langgraph_studio.png)
 
 ## Requirements
 
